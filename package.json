@@ -38,6 +38,7 @@
       "icon": "assets/icon.png"
     },
     "mac": {
+      "identity": null,
       "target": [
         {
           "target": "dmg",
