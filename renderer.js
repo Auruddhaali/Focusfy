@@ -58,7 +58,7 @@ themeToggle.addEventListener('click', () => {
 updateTheme();
 
 // Timer functions
-function updateTimerDisplay() {
+function updateTimerDisplay(justFinished = false) {
     const display = document.getElementById('timerDisplay');
     const mins = String(timerState.minutes).padStart(2, '0');
     const secs = String(timerState.seconds).padStart(2, '0');
@@ -67,7 +67,8 @@ function updateTimerDisplay() {
     // Update floating timer
     ipcRenderer.send('update-timer', {
         time: `${mins}:${secs}`,
-        isRunning: timerState.isRunning
+        isRunning: timerState.isRunning,
+        justFinished: justFinished
     });
 }
 
@@ -94,8 +95,9 @@ function startTimer() {
                 timerState.focusTimeToday += Math.floor(timerState.totalSeconds / 60);
                 updateStats();
 
-                // Play sound (if available)
+                // Play sound and notify floating window
                 playNotificationSound();
+                updateTimerDisplay(true);
 
                 return;
             }
@@ -154,6 +156,62 @@ function playNotificationSound() {
 }
 
 // Timer controls
+document.getElementById('startBtn').addEventListener('click', startTimer);
+document.getElementById('pauseBtn').addEventListener('click', pauseTimer);
+document.getElementById('resetBtn').addEventListener('click', resetTimer);
+
+// Pomodoro presets
+document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const minutes = parseInt(btn.dataset.minutes);
+        timerState.totalSeconds = minutes * 60;
+        resetTimer();
+    });
+});
+
+// Custom time input
+document.getElementById('setCustomTimeBtn').addEventListener('click', () => {
+    const hours = parseInt(document.getElementById('customHours').value) || 0;
+    const minutes = parseInt(document.getElementById('customMinutes').value) || 0;
+
+    if (hours === 0 && minutes === 0) {
+        alert('Please enter a valid time (hours and/or minutes)');
+        return;
+    }
+
+    if (hours > 23) {
+        alert('Hours cannot exceed 23');
+        return;
+    }
+
+    if (minutes > 59) {
+        alert('Minutes cannot exceed 59');
+        return;
+    }
+
+    const totalMinutes = (hours * 60) + minutes;
+    timerState.totalSeconds = totalMinutes * 60;
+
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    resetTimer();
+
+    const hourText = hours > 0 ? `${hours}h ` : '';
+    const minuteText = minutes > 0 ? `${minutes}min` : '';
+    document.getElementById('timerLabel').textContent = `Custom: ${hourText}${minuteText}`;
+});
+
+// Tasks functions
+function saveTasks() {
+    localStorage.setItem('focusfy-tasks', JSON.stringify(tasks));
+    updateStats();
+    syncTasksToFloatingWindow();
+}
+
+function syncTasksToFloatingWindow() {
+    ipcRenderer.send('sync-tasks', tasks);
 }
 
 function renderTasks() {
@@ -177,7 +235,6 @@ function renderTasks() {
     </div>
   `).join('');
 
-    // Add event listeners
     tasksList.querySelectorAll('.task-checkbox').forEach(checkbox => {
         checkbox.addEventListener('click', (e) => {
             const index = parseInt(e.target.dataset.index);
@@ -243,6 +300,7 @@ document.getElementById('toggleFloatingTimer').addEventListener('click', () => {
     if (floatingTimerVisible) {
         ipcRenderer.send('show-timer');
         document.getElementById('toggleFloatingTimer').textContent = 'Hide Floating Timer';
+        setTimeout(() => syncTasksToFloatingWindow(), 100);
     } else {
         ipcRenderer.send('hide-timer');
         document.getElementById('toggleFloatingTimer').textContent = 'Show Floating Timer';
@@ -270,4 +328,13 @@ window.addEventListener('beforeunload', () => {
         focusTime: timerState.focusTimeToday,
         pomodoros: timerState.pomodoroCount
     }));
+});
+
+// Listen for task toggle from floating window
+ipcRenderer.on('toggle-task', (event, index) => {
+    if (tasks[index]) {
+        tasks[index].completed = !tasks[index].completed;
+        saveTasks();
+        renderTasks();
+    }
 });

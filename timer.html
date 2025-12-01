@@ -9,9 +9,25 @@
 </head>
 
 <body>
-    <div class="glass floating-timer" id="floatingTimer">
-        <div class="floating-timer-display" id="floatingTimerDisplay">25:00</div>
-        <div class="floating-timer-label" id="floatingTimerLabel">FocusFy</div>
+    <div class="glass floating-timer-container" id="floatingTimer">
+        <!-- Timer Header -->
+        <div class="floating-timer-header">
+            <div class="floating-timer-display" id="floatingTimerDisplay">25:00</div>
+            <div class="floating-timer-label" id="floatingTimerLabel">FocusFy</div>
+        </div>
+
+        <!-- Resize Handle -->
+        <div class="resize-handle">⋮⋮</div>
+
+        <!-- Tasks Section -->
+        <div class="floating-tasks-section">
+            <div class="floating-tasks-title">Today's Tasks</div>
+            <div class="floating-tasks-list" id="floatingTasksList">
+                <div class="empty-state-small">
+                    <div class="empty-state-text-small">No tasks yet</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="timer.js"></script>

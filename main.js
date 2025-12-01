@@ -21,7 +21,7 @@ function createMainWindow() {
   });
 
   mainWindow.loadFile('index.html');
-  
+
   mainWindow.on('closed', () => {
     mainWindow = null;
     if (timerWindow) {
@@ -32,12 +32,16 @@ function createMainWindow() {
 
 function createTimerWindow() {
   timerWindow = new BrowserWindow({
-    width: 280,
-    height: 120,
+    width: 350,
+    height: 500,
+    minWidth: 280,
+    minHeight: 200,
+    maxWidth: 600,
+    maxHeight: 800,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
-    resizable: false,
+    resizable: true,
     skipTaskbar: true,
     backgroundColor: '#00000000',
     webPreferences: {
@@ -47,7 +51,7 @@ function createTimerWindow() {
   });
 
   timerWindow.loadFile('timer.html');
-  
+
   // Position in top-right corner
   const { screen } = require('electron');
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -111,5 +115,24 @@ ipcMain.on('hide-timer', () => {
 ipcMain.on('update-timer', (event, data) => {
   if (timerWindow) {
     timerWindow.webContents.send('timer-update', data);
+  }
+});
+
+ipcMain.on('sync-tasks', (event, tasks) => {
+  if (timerWindow) {
+    timerWindow.webContents.send('tasks-update', tasks);
+  }
+});
+
+ipcMain.on('task-toggled', (event, index) => {
+  if (mainWindow) {
+    mainWindow.webContents.send('toggle-task', index);
+  }
+});
+
+ipcMain.on('play-completion-sound', () => {
+  // Relay to main window to play sound
+  if (mainWindow) {
+    mainWindow.webContents.send('play-sound');
   }
 });
