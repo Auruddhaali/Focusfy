@@ -338,3 +338,51 @@ ipcRenderer.on('toggle-task', (event, index) => {
         renderTasks();
     }
 });
+// Update Checker
+const CURRENT_VERSION = '1.0.0'; // Match package.json
+const UPDATE_URL = 'https://focusfy-website.vercel.app/version.json'; // REPLACE with your actual Vercel URL
+
+async function checkForUpdates() {
+    try {
+        const response = await fetch(UPDATE_URL);
+        const data = await response.json();
+
+        if (isNewerVersion(data.version, CURRENT_VERSION)) {
+            showUpdateNotification(data.version);
+        }
+    } catch (error) {
+        console.log('Update check failed:', error);
+    }
+}
+
+function isNewerVersion(newVer, currentVer) {
+    const v1 = newVer.split('.').map(Number);
+    const v2 = currentVer.split('.').map(Number);
+
+    for (let i = 0; i < 3; i++) {
+        if (v1[i] > v2[i]) return true;
+        if (v1[i] < v2[i]) return false;
+    }
+    return false;
+}
+
+function showUpdateNotification(version) {
+    const notification = document.getElementById('updateNotification');
+    const versionSpan = document.getElementById('newVersionNumber');
+    const updateBtn = document.getElementById('updateBtn');
+    const closeBtn = document.getElementById('closeUpdateBtn');
+
+    versionSpan.textContent = `v${version}`;
+    notification.style.display = 'flex';
+
+    updateBtn.onclick = () => {
+        require('electron').shell.openExternal('https://focusfy-website.vercel.app'); // Open website
+    };
+
+    closeBtn.onclick = () => {
+        notification.style.display = 'none';
+    };
+}
+
+// Check for updates on startup
+setTimeout(checkForUpdates, 3000); // 3 second delay
