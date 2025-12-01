@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusFy - Stay Focused, Get Things Done</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app-background"></div>
+
+  <!-- Custom Title Bar -->
+  <div class="titlebar">
+    <div class="titlebar-title">FocusFy</div>
+    <div class="titlebar-controls">
+      <button class="titlebar-btn minimize" id="minimizeBtn">─</button>
+      <button class="titlebar-btn maximize" id="maximizeBtn">□</button>
+      <button class="titlebar-btn close" id="closeBtn">✕</button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Stats Section -->
+      <div class="glass sidebar-section">
+        <div class="section-title">Today's Stats</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="completedTasks">0</div>
+            <div class="stat-label">Tasks Done</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="focusTime">0h</div>
+            <div class="stat-label">Focus Time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="pomodoroCount">0</div>
+            <div class="stat-label">Pomodoros</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme Toggle -->
+      <div class="glass sidebar-section">
+        <div class="section-title">Appearance</div>
+        <div class="theme-toggle" id="themeToggle">
+          <span>🌙</span>
+          <span style="flex: 1; font-size: 14px; color: var(--text-primary);">Dark Mode</span>
+          <div class="toggle-switch active"></div>
+        </div>
+      </div>
+
+      <!-- Floating Timer Control -->
+      <div class="glass sidebar-section">
+        <div class="section-title">Floating Timer</div>
+        <button class="btn btn-secondary" id="toggleFloatingTimer" style="width: 100%;">
+          Show Floating Timer
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Timer Section -->
+      <div class="glass timer-section">
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-label" id="timerLabel">Ready to focus?</div>
+
+        <div class="timer-controls">
+          <button class="btn btn-primary" id="startBtn">
+            <span>▶</span>
+            <span>Start</span>
+          </button>
+          <button class="btn btn-secondary" id="pauseBtn" style="display: none;">
+            <span>⏸</span>
+            <span>Pause</span>
+          </button>
+          <button class="btn btn-secondary" id="resetBtn">
+            <span>↻</span>
+            <span>Reset</span>
+          </button>
+        </div>
+
+        <div class="pomodoro-presets">
+          <button class="preset-btn active" data-minutes="25">25 min</button>
+          <button class="preset-btn" data-minutes="15">15 min</button>
+          <button class="preset-btn" data-minutes="5">5 min</button>
+          <button class="preset-btn" data-minutes="1">1 min</button>
+        </div>
+
+        <!-- Custom Time Input -->
+        <div class="custom-time-section">
+          <div class="section-title" style="text-align: center; margin-top: 20px; margin-bottom: 15px;">Custom Time
+          </div>
+          <div class="custom-time-inputs">
+            <div class="time-input-group">
+              <input type="number" id="customHours" class="custom-time-input" min="0" max="23" value="0"
+                placeholder="0">
+              <label class="time-input-label">Hours</label>
+            </div>
+            <span class="time-separator">:</span>
+            <div class="time-input-group">
+              <input type="number" id="customMinutes" class="custom-time-input" min="0" max="59" value="0"
+                placeholder="0">
+              <label class="time-input-label">Minutes</label>
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="setCustomTimeBtn" style="margin-top: 15px;">
+            <span>⏱</span>
+            <span>Set Custom Time</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tasks Section -->
+      <div class="glass tasks-section">
+        <div class="tasks-header">
+          <h2 class="tasks-title">Tasks</h2>
+        </div>
+
+        <div class="task-input-container">
+          <input type="text" class="task-input" id="taskInput" placeholder="What do you want to accomplish?"
+            maxlength="200">
+          <button class="btn btn-primary" id="addTaskBtn">
+            <span>+</span>
+            <span>Add</span>
+          </button>
+        </div>
+
+        <div class="tasks-list" id="tasksList">
+          <div class="empty-state">
+            <div class="empty-state-icon">✓</div>
+            <div class="empty-state-text">No tasks yet. Add one to get started!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+
+</html>

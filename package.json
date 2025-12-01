@@ -1,0 +1,54 @@
+{
+  "name": "focusfy",
+  "version": "1.0.0",
+  "description": "A beautiful productivity app with focus timer and task management",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "build-installer": "electron-builder --win --x64"
+  },
+  "keywords": [
+    "productivity",
+    "timer",
+    "pomodoro",
+    "tasks"
+  ],
+  "author": "Auruddha Rushd Ali",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.focusfy.app",
+    "productName": "FocusFy",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FocusFy"
+    },
+    "files": [
+      "main.js",
+      "renderer.js",
+      "timer.js",
+      "index.html",
+      "timer.html",
+      "styles.css",
+      "assets/**/*"
+    ]
+  }
+}
